@@ -1,16 +1,16 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"os"
 
+	"github.com/99designs/gqlgen/_examples/large-project-structure/main/graph"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/lru"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/99designs/gqlgen/_examples/large-project-structure/main/graph"
+	"github.com/sirupsen/logrus"
 	"github.com/vektah/gqlparser/v2/ast"
 
 	"github.com/99designs/gqlgen/_examples/large-project-structure/integration"
@@ -25,10 +25,24 @@ func main() {
 		port = defaultPort
 	}
 
+	// Create a new logger instance
+	log := logrus.New()
+	log.SetLevel(logrus.DebugLevel)
+	log.WithFields(logrus.Fields{
+		"namespace": "main",
+	})
+
 	// Create a new executable schema with the composed resolver
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{
 		Resolvers: &graph.Resolver{
-			ExternalQueryResolver: &integration.Resolver{},
+			ExternalQueryResolver: &integration.Resolver{
+				Logger: func(log *logrus.Logger) *logrus.Entry {
+					// Clone the mainLoggerEntry with a different namespace
+					return log.WithFields(logrus.Fields{
+						"namespace": "integration",
+					})
+				}(log),
+			},
 			// Add other team resolvers here
 		},
 	}))

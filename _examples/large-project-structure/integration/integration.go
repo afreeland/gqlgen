@@ -6,17 +6,22 @@ import (
 	"fmt"
 
 	"github.com/99designs/gqlgen/_examples/large-project-structure/main/graph/model"
+	"github.com/99designs/gqlgen/_examples/large-project-structure/shared"
 )
 
-type Resolver struct{}
+type Resolver struct {
+	Logger shared.Logger
+}
 
 // Implement the Tezz method that is managed by another team
 func (r *Resolver) Tezz(ctx context.Context) (*model.Test, error) {
+	r.Logger.Info("Tezz was hit!")
 	// Can do whatever logic is needed...
 	return &model.Test{ID: "external-1"}, nil
 }
 
 func (r *Resolver) GetYaSome(ctx context.Context, input *model.CustomInput) ([]*model.CustomZeekIntel, error) {
+	r.Logger.Info("Better GetYaSome")
 	intels := []*model.CustomZeekIntel{}
 
 	if input.Error != nil && *input.Error {
@@ -39,6 +44,7 @@ func (r *Resolver) GetYaSome(ctx context.Context, input *model.CustomInput) ([]*
 }
 
 func (r *Resolver) AddIndicator(ctx context.Context, input model.IndicatorInput) (*model.Indicator, error) {
+	r.Logger.Infof("Oh, looking to add indicator", input)
 	return &model.Indicator{
 		ID:            "1234",
 		Indicator:     input.Indicator,

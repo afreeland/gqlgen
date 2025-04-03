@@ -12,9 +12,9 @@ import (
 	"sync"
 	"sync/atomic"
 
+	"github.com/99designs/gqlgen/_examples/large-project-structure/main/graph/model"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
-	"github.com/99designs/gqlgen/_examples/large-project-structure/main/graph/model"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -454,7 +454,7 @@ func (ec *executionContext) field_Mutation_addIndicator_argsInput(
 ) (model.IndicatorInput, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNIndicatorInput2githubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐIndicatorInput(ctx, tmp)
+		return ec.unmarshalNIndicatorInput2githubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐIndicatorInput(ctx, tmp)
 	}
 
 	var zeroVal model.IndicatorInput
@@ -477,7 +477,7 @@ func (ec *executionContext) field_Mutation_createTodo_argsInput(
 ) (model.NewTodo, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNNewTodo2githubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐNewTodo(ctx, tmp)
+		return ec.unmarshalNNewTodo2githubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐNewTodo(ctx, tmp)
 	}
 
 	var zeroVal model.NewTodo
@@ -523,7 +523,7 @@ func (ec *executionContext) field_Query_getYaSome_argsInput(
 ) (*model.CustomInput, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalOCustomInput2ᚖgithubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐCustomInput(ctx, tmp)
+		return ec.unmarshalOCustomInput2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐCustomInput(ctx, tmp)
 	}
 
 	var zeroVal *model.CustomInput
@@ -966,7 +966,7 @@ func (ec *executionContext) _Mutation_createTodo(ctx context.Context, field grap
 	}
 	res := resTmp.(*model.Todo)
 	fc.Result = res
-	return ec.marshalNTodo2ᚖgithubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐTodo(ctx, field.Selections, res)
+	return ec.marshalNTodo2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐTodo(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createTodo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1031,7 +1031,7 @@ func (ec *executionContext) _Mutation_addIndicator(ctx context.Context, field gr
 	}
 	res := resTmp.(*model.Indicator)
 	fc.Result = res
-	return ec.marshalNIndicator2ᚖgithubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐIndicator(ctx, field.Selections, res)
+	return ec.marshalNIndicator2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐIndicator(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_addIndicator(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1096,7 +1096,7 @@ func (ec *executionContext) _Query_todos(ctx context.Context, field graphql.Coll
 	}
 	res := resTmp.([]*model.Todo)
 	fc.Result = res
-	return ec.marshalNTodo2ᚕᚖgithubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐTodoᚄ(ctx, field.Selections, res)
+	return ec.marshalNTodo2ᚕᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐTodoᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_todos(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1150,7 +1150,7 @@ func (ec *executionContext) _Query_tezz(ctx context.Context, field graphql.Colle
 	}
 	res := resTmp.(*model.Test)
 	fc.Result = res
-	return ec.marshalNTest2ᚖgithubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐTest(ctx, field.Selections, res)
+	return ec.marshalNTest2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐTest(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_tezz(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1198,7 +1198,7 @@ func (ec *executionContext) _Query_getYaSome(ctx context.Context, field graphql.
 	}
 	res := resTmp.([]*model.CustomZeekIntel)
 	fc.Result = res
-	return ec.marshalNCustomZeekIntel2ᚕᚖgithubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐCustomZeekIntelᚄ(ctx, field.Selections, res)
+	return ec.marshalNCustomZeekIntel2ᚕᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐCustomZeekIntelᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getYaSome(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1568,7 +1568,7 @@ func (ec *executionContext) _Todo_user(ctx context.Context, field graphql.Collec
 	}
 	res := resTmp.(*model.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Todo_user(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4524,7 +4524,7 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNCustomZeekIntel2ᚕᚖgithubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐCustomZeekIntelᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.CustomZeekIntel) graphql.Marshaler {
+func (ec *executionContext) marshalNCustomZeekIntel2ᚕᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐCustomZeekIntelᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.CustomZeekIntel) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -4548,7 +4548,7 @@ func (ec *executionContext) marshalNCustomZeekIntel2ᚕᚖgithubᚗcomᚋcorelig
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNCustomZeekIntel2ᚖgithubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐCustomZeekIntel(ctx, sel, v[i])
+			ret[i] = ec.marshalNCustomZeekIntel2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐCustomZeekIntel(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -4568,7 +4568,7 @@ func (ec *executionContext) marshalNCustomZeekIntel2ᚕᚖgithubᚗcomᚋcorelig
 	return ret
 }
 
-func (ec *executionContext) marshalNCustomZeekIntel2ᚖgithubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐCustomZeekIntel(ctx context.Context, sel ast.SelectionSet, v *model.CustomZeekIntel) graphql.Marshaler {
+func (ec *executionContext) marshalNCustomZeekIntel2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐCustomZeekIntel(ctx context.Context, sel ast.SelectionSet, v *model.CustomZeekIntel) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4593,11 +4593,11 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
-func (ec *executionContext) marshalNIndicator2githubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐIndicator(ctx context.Context, sel ast.SelectionSet, v model.Indicator) graphql.Marshaler {
+func (ec *executionContext) marshalNIndicator2githubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐIndicator(ctx context.Context, sel ast.SelectionSet, v model.Indicator) graphql.Marshaler {
 	return ec._Indicator(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNIndicator2ᚖgithubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐIndicator(ctx context.Context, sel ast.SelectionSet, v *model.Indicator) graphql.Marshaler {
+func (ec *executionContext) marshalNIndicator2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐIndicator(ctx context.Context, sel ast.SelectionSet, v *model.Indicator) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4607,12 +4607,12 @@ func (ec *executionContext) marshalNIndicator2ᚖgithubᚗcomᚋcorelightᚋmain
 	return ec._Indicator(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNIndicatorInput2githubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐIndicatorInput(ctx context.Context, v any) (model.IndicatorInput, error) {
+func (ec *executionContext) unmarshalNIndicatorInput2githubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐIndicatorInput(ctx context.Context, v any) (model.IndicatorInput, error) {
 	res, err := ec.unmarshalInputIndicatorInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNNewTodo2githubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐNewTodo(ctx context.Context, v any) (model.NewTodo, error) {
+func (ec *executionContext) unmarshalNNewTodo2githubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐNewTodo(ctx context.Context, v any) (model.NewTodo, error) {
 	res, err := ec.unmarshalInputNewTodo(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -4632,11 +4632,11 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) marshalNTest2githubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐTest(ctx context.Context, sel ast.SelectionSet, v model.Test) graphql.Marshaler {
+func (ec *executionContext) marshalNTest2githubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐTest(ctx context.Context, sel ast.SelectionSet, v model.Test) graphql.Marshaler {
 	return ec._Test(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNTest2ᚖgithubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐTest(ctx context.Context, sel ast.SelectionSet, v *model.Test) graphql.Marshaler {
+func (ec *executionContext) marshalNTest2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐTest(ctx context.Context, sel ast.SelectionSet, v *model.Test) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4646,11 +4646,11 @@ func (ec *executionContext) marshalNTest2ᚖgithubᚗcomᚋcorelightᚋmainᚋgr
 	return ec._Test(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNTodo2githubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐTodo(ctx context.Context, sel ast.SelectionSet, v model.Todo) graphql.Marshaler {
+func (ec *executionContext) marshalNTodo2githubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐTodo(ctx context.Context, sel ast.SelectionSet, v model.Todo) graphql.Marshaler {
 	return ec._Todo(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNTodo2ᚕᚖgithubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐTodoᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Todo) graphql.Marshaler {
+func (ec *executionContext) marshalNTodo2ᚕᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐTodoᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Todo) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -4674,7 +4674,7 @@ func (ec *executionContext) marshalNTodo2ᚕᚖgithubᚗcomᚋcorelightᚋmain�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNTodo2ᚖgithubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐTodo(ctx, sel, v[i])
+			ret[i] = ec.marshalNTodo2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐTodo(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -4694,7 +4694,7 @@ func (ec *executionContext) marshalNTodo2ᚕᚖgithubᚗcomᚋcorelightᚋmain�
 	return ret
 }
 
-func (ec *executionContext) marshalNTodo2ᚖgithubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐTodo(ctx context.Context, sel ast.SelectionSet, v *model.Todo) graphql.Marshaler {
+func (ec *executionContext) marshalNTodo2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐTodo(ctx context.Context, sel ast.SelectionSet, v *model.Todo) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4704,7 +4704,7 @@ func (ec *executionContext) marshalNTodo2ᚖgithubᚗcomᚋcorelightᚋmainᚋgr
 	return ec._Todo(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4991,7 +4991,7 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) unmarshalOCustomInput2ᚖgithubᚗcomᚋcorelightᚋmainᚋgraphᚋmodelᚐCustomInput(ctx context.Context, v any) (*model.CustomInput, error) {
+func (ec *executionContext) unmarshalOCustomInput2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋmainᚋgraphᚋmodelᚐCustomInput(ctx context.Context, v any) (*model.CustomInput, error) {
 	if v == nil {
 		return nil, nil
 	}
