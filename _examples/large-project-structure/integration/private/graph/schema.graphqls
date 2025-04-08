@@ -1,0 +1,22 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+
+
+
+extend type Query {
+  getInside: String!
+}
+
+input fetchCrowdStrikeIntelInput {
+  url: String!
+  option1: String
+  option2: String
+}
+
+extend type Mutation {
+  fetchCrowdStrikeIntel(input: fetchCrowdStrikeIntelInput): GeneralMessage
+  fetchCrowdStrikeHostDetailDirect(connectorID: Int!): [HostDetail!]!
+  fetchCrowdStrikeHostDetail(connectorID: Int!): GeneralMessage!
+}

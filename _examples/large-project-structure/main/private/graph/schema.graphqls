@@ -1,0 +1,43 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+
+type SubmitIntelResponse {
+  success: Boolean!
+  verificationCode: String!
+}
+
+input SubmitIntel {
+  name: String!
+  intelID: Int!
+  filepath: String!
+}
+
+type Connector {
+  id: Int!
+  name: String!
+  config: JSON!
+}
+
+type Query {
+  getConnector(id: Int!): Connector!
+  getFromExternal: String!
+}
+
+enum FileSourceType {
+  INPUT
+  INTEL_RULES
+  SURICATA_RULES
+}
+
+input ProcessFileSource {
+  type: FileSourceType!
+  dir: String!
+}
+
+type Mutation {
+  pushIntel(input: SubmitIntel!): SubmitIntelResponse
+  processFile(input: ProcessFileSource!): GeneralMessage
+
+}

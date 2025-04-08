@@ -5,8 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/99designs/gqlgen/_examples/large-project-structure/main/graph/model"
-	"github.com/99designs/gqlgen/_examples/large-project-structure/shared"
+	priv "github.com/99designs/gqlgen/_examples/large-project-structure/main/private/graph"
+	"github.com/99designs/gqlgen/_examples/large-project-structure/main/public/graph/model"
+	shared "github.com/99designs/gqlgen/_examples/large-project-structure/shared/graph"
 )
 
 type Resolver struct {
@@ -45,6 +46,14 @@ func (r *Resolver) GetYaSome(ctx context.Context, input *model.CustomInput) ([]*
 
 func (r *Resolver) AddIndicator(ctx context.Context, input model.IndicatorInput) (*model.Indicator, error) {
 	r.Logger.Infof("Oh, looking to add indicator", input)
+
+	q := priv.QResolver{}
+	c, err := q.GetConnector(ctx, 47)
+	if err != nil {
+		return nil, errors.New("unable to get ur connector, my bad bruh")
+	}
+	fmt.Println("got a connector for your..")
+	fmt.Printf("%+v\n", c)
 	return &model.Indicator{
 		ID:            "1234",
 		Indicator:     input.Indicator,

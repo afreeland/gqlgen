@@ -1,0 +1,121 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+scalar JSON
+
+interface ZeekIntel {
+  id: ID!
+  name: String!
+}
+
+type GeneralMessage {
+  success: Boolean!
+  message: String
+}
+
+# This could just be a string but then not strongly typed
+# Enums, can't be extended like queries/mutations
+# So, this may need to be updated by the integration..not ideal but
+# likely better than just a string needing parsed
+enum ConnectorType {
+  ALIENVAULT
+  CROWDSTRIKE_FALCON
+  MANDIANT
+  VALHALLA
+  # Add more connector types here as needed
+}
+
+interface ConnectionInfo {
+  id: ID!
+  type: ConnectorType!
+  authInfo: AuthInfo
+}
+
+enum AuthType {
+  OAUTH2
+  BASIC
+  NONE
+}
+
+type OAuth2AuthInfo implements AuthInfo {
+  type: AuthType!
+  config: OAuth2!
+}
+
+type BasicAuthInfo implements AuthInfo {
+  type: AuthType!
+  config: Basic!
+}
+
+type NoAuthInfo implements AuthInfo {
+  type: AuthType!
+}
+
+type OAuth2 {
+  clientId: String!
+  clientToken: String!
+}
+
+type Basic {
+  username: String!
+  password: String
+}
+
+interface AuthInfo {
+  type: AuthType!
+}
+
+
+enum CrowdStrikeFalconCloud {
+  US_1,
+  US_2,
+  EU_1,
+  US_GOV_1
+}
+
+
+type CrowdStrikeFalconConnection implements ConnectionInfo {
+  id: ID!
+  type: ConnectorType!
+  authInfo: AuthInfo
+  cloud: CrowdStrikeFalconCloud
+  # Add more fields specific to CrowdStrike Falcon here
+}
+
+type HostDetail {
+  agentLoadFlags: String
+  agentLocalTime: String
+  agentVersion: String
+  biosManufacturer: String
+  biosVersion: String
+  chassisType: String
+  chassisTypeDesc: String
+  cid: String
+  configIdBase: String
+  configIdBuild: String
+  configIdPlatform: String
+  connectionIp: String
+  connectionMacAddress: String
+  cpuSignature: String
+  cpuVendor: String
+  defaultGatewayIp: String
+  deploymentType: String
+  deviceId: String
+  devicePolicies: DevicePolicies
+}
+
+type DevicePolicies {
+  contentUpdate: ContentUpdatePolicy
+}
+
+type ContentUpdatePolicy {
+  applied: Boolean
+  appliedDate: String
+  assignedDate: String
+  lastEvaluationDate: String
+  policyId: String
+  policyType: String
+  ruleGroups: String
+  settingsHash: String
+}

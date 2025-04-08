@@ -8,7 +8,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/99designs/gqlgen/_examples/large-project-structure/main/graph/model"
+	"github.com/99designs/gqlgen/_examples/large-project-structure/main/public/graph/model"
 )
 
 // CreateTodo is the resolver for the createTodo field.
