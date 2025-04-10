@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/lru"
@@ -24,6 +25,12 @@ import (
 
 const defaultPort = "8080"
 const privatePort = "8081"
+
+var publicExecutableSchema graphql.ExecutableSchema
+
+func GetPublicSomething() graphql.ExecutableSchema {
+	return publicExecutableSchema
+}
 
 func main() {
 	publicPort := os.Getenv("PORT")
@@ -60,8 +67,7 @@ func main() {
 		"namespace": "main",
 	})
 
-	// Create a new executable schema with the composed resolver
-	publicSrv := handler.NewDefaultServer(public_graph.NewExecutableSchema(public_graph.Config{
+	publicExecutableSchema = public_graph.NewExecutableSchema(public_graph.Config{
 		Resolvers: &public_graph.Resolver{
 			ExternalQueryResolver: &integration.Resolver{
 				Logger: func(log *logrus.Logger) *logrus.Entry {
@@ -73,7 +79,9 @@ func main() {
 			},
 			// Add other team resolvers here
 		},
-	}))
+	})
+	// Create a new executable schema with the composed resolver
+	publicSrv := handler.NewDefaultServer(publicExecutableSchema)
 
 	publicSrv.AddTransport(transport.Options{})
 	publicSrv.AddTransport(transport.GET{})

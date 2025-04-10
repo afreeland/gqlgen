@@ -2,6 +2,27 @@ type Test {
     id: ID!
 }
 
+type AppCrowdStrike implements AppConnector {
+  id: ID!
+  name: String!
+  description: String!
+  readme: UIMarkdown!
+  docUrl: String
+  logo: UIImage!
+  carousel: UICarousel
+  tags: AppConnectorChip
+
+  items: [UIDynamicFieldSet!]!
+}
+
+enum AppConnectorCloudEnum {
+  US_1
+  US_2
+  EU_1
+  US_GOV_1
+  US_GOV_2
+}
+
 type CustomZeekIntel implements ZeekIntel{
   id: ID!
   name: String!
@@ -17,6 +38,7 @@ input CustomInput {
 extend type Query {
   tezz: Test!
   getYaSome(input: CustomInput): [CustomZeekIntel!]!
+  getAppCrowdStrike: AppCrowdStrike!
 }
 
 type Indicator {

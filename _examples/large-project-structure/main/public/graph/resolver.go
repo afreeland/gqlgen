@@ -17,8 +17,7 @@ type ExternalQueryResolver interface {
 	// Example query resolver with args
 	GetYaSome(context.Context, *model.CustomInput) ([]*model.CustomZeekIntel, error)
 
-	// Example mutation resolver with args
-	AddIndicator(context.Context, model.IndicatorInput) (*model.Indicator, error)
+	GetAppCrowdStrike(ctx context.Context) (*model.AppCrowdStrike, error)
 }
 
 type Resolver struct {

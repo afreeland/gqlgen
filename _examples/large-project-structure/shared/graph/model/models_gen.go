@@ -8,9 +8,26 @@ import (
 	"strconv"
 )
 
+type AppConnector interface {
+	IsAppConnector()
+	GetID() string
+	GetName() string
+	GetDescription() string
+	GetReadme() *UIMarkdown
+	GetDocURL() *string
+	GetLogo() *UIImage
+	GetCarousel() *UICarousel
+	GetTags() *AppConnectorChip
+}
+
 type AuthInfo interface {
 	IsAuthInfo()
 	GetType() AuthType
+}
+
+type Chip interface {
+	IsChip()
+	GetID() *string
 }
 
 type ConnectionInfo interface {
@@ -20,11 +37,37 @@ type ConnectionInfo interface {
 	GetAuthInfo() AuthInfo
 }
 
+type UIComponent interface {
+	IsUIComponent()
+	GetID() *string
+}
+
+type UIDynamicValidator interface {
+	IsUIDynamicValidator()
+	GetType() string
+	GetMessage() string
+}
+
+type UIPanel interface {
+	IsUIComponent()
+	IsUIPanel()
+	GetID() *string
+	GetColumns() int32
+}
+
 type ZeekIntel interface {
 	IsZeekIntel()
 	GetID() string
 	GetName() string
 }
+
+type AppConnectorChip struct {
+	ID    *string                `json:"id,omitempty"`
+	Chips []AppConnectorChipEnum `json:"chips"`
+}
+
+func (AppConnectorChip) IsChip()             {}
+func (this AppConnectorChip) GetID() *string { return this.ID }
 
 type Basic struct {
 	Username string  `json:"username"`
@@ -39,6 +82,17 @@ type BasicAuthInfo struct {
 func (BasicAuthInfo) IsAuthInfo()            {}
 func (this BasicAuthInfo) GetType() AuthType { return this.Type }
 
+type ContentUpdatePolicy struct {
+	Applied            *bool   `json:"applied,omitempty"`
+	AppliedDate        *string `json:"appliedDate,omitempty"`
+	AssignedDate       *string `json:"assignedDate,omitempty"`
+	LastEvaluationDate *string `json:"lastEvaluationDate,omitempty"`
+	PolicyID           *string `json:"policyId,omitempty"`
+	PolicyType         *string `json:"policyType,omitempty"`
+	RuleGroups         *string `json:"ruleGroups,omitempty"`
+	SettingsHash       *string `json:"settingsHash,omitempty"`
+}
+
 type CrowdStrikeFalconConnection struct {
 	ID       string                  `json:"id"`
 	Type     ConnectorType           `json:"type"`
@@ -51,9 +105,35 @@ func (this CrowdStrikeFalconConnection) GetID() string          { return this.ID
 func (this CrowdStrikeFalconConnection) GetType() ConnectorType { return this.Type }
 func (this CrowdStrikeFalconConnection) GetAuthInfo() AuthInfo  { return this.AuthInfo }
 
+type DevicePolicies struct {
+	ContentUpdate *ContentUpdatePolicy `json:"contentUpdate,omitempty"`
+}
+
 type GeneralMessage struct {
 	Success bool    `json:"success"`
 	Message *string `json:"message,omitempty"`
+}
+
+type HostDetail struct {
+	AgentLoadFlags       *string         `json:"agentLoadFlags,omitempty"`
+	AgentLocalTime       *string         `json:"agentLocalTime,omitempty"`
+	AgentVersion         *string         `json:"agentVersion,omitempty"`
+	BiosManufacturer     *string         `json:"biosManufacturer,omitempty"`
+	BiosVersion          *string         `json:"biosVersion,omitempty"`
+	ChassisType          *string         `json:"chassisType,omitempty"`
+	ChassisTypeDesc      *string         `json:"chassisTypeDesc,omitempty"`
+	Cid                  *string         `json:"cid,omitempty"`
+	ConfigIDBase         *string         `json:"configIdBase,omitempty"`
+	ConfigIDBuild        *string         `json:"configIdBuild,omitempty"`
+	ConfigIDPlatform     *string         `json:"configIdPlatform,omitempty"`
+	ConnectionIP         *string         `json:"connectionIp,omitempty"`
+	ConnectionMacAddress *string         `json:"connectionMacAddress,omitempty"`
+	CPUSignature         *string         `json:"cpuSignature,omitempty"`
+	CPUVendor            *string         `json:"cpuVendor,omitempty"`
+	DefaultGatewayIP     *string         `json:"defaultGatewayIp,omitempty"`
+	DeploymentType       *string         `json:"deploymentType,omitempty"`
+	DeviceID             *string         `json:"deviceId,omitempty"`
+	DevicePolicies       *DevicePolicies `json:"devicePolicies,omitempty"`
 }
 
 type NoAuthInfo struct {
@@ -77,6 +157,168 @@ func (OAuth2AuthInfo) IsAuthInfo()            {}
 func (this OAuth2AuthInfo) GetType() AuthType { return this.Type }
 
 type Query struct {
+}
+
+type TextChip struct {
+	ID   *string `json:"id,omitempty"`
+	Text string  `json:"text"`
+}
+
+func (TextChip) IsChip()             {}
+func (this TextChip) GetID() *string { return this.ID }
+
+type UIBasicChip struct {
+	ID    *string `json:"id,omitempty"`
+	Chips []Chip  `json:"chips"`
+}
+
+func (UIBasicChip) IsUIComponent()      {}
+func (this UIBasicChip) GetID() *string { return this.ID }
+
+type UICarousel struct {
+	ID    *string           `json:"id,omitempty"`
+	Items []*UICarouselItem `json:"items"`
+}
+
+func (UICarousel) IsUIComponent()      {}
+func (this UICarousel) GetID() *string { return this.ID }
+
+type UICarouselItem struct {
+	ID    *string  `json:"id,omitempty"`
+	Text  *string  `json:"text,omitempty"`
+	Image *UIImage `json:"image,omitempty"`
+}
+
+func (UICarouselItem) IsUIComponent()      {}
+func (this UICarouselItem) GetID() *string { return this.ID }
+
+type UIDefaultValue struct {
+	ValueType *UIDDynamicFieldType `json:"valueType,omitempty"`
+	Value     *string              `json:"value,omitempty"`
+}
+
+type UIDynamicCondition struct {
+	FieldName     string                      `json:"fieldName"`
+	Operator      *UIDynamicConditionOperator `json:"operator,omitempty"`
+	ExpectedValue *UIDefaultValueType         `json:"expectedValue,omitempty"`
+}
+
+type UIDynamicField struct {
+	ID           *string              `json:"id,omitempty"`
+	Type         *UIDDynamicFieldType `json:"type,omitempty"`
+	Description  *string              `json:"description,omitempty"`
+	Label        string               `json:"label"`
+	FieldName    string               `json:"fieldName"`
+	Required     bool                 `json:"required"`
+	DefaultValue *UIDefaultValue      `json:"defaultValue,omitempty"`
+}
+
+type UIDynamicFieldSet struct {
+	ID          *string               `json:"id,omitempty"`
+	Columns     *int32                `json:"columns,omitempty"`
+	Label       string                `json:"label"`
+	Description *string               `json:"description,omitempty"`
+	Fields      []*UIDynamicField     `json:"fields"`
+	Conditions  []*UIDynamicCondition `json:"conditions"`
+}
+
+type UIDynamicSelect struct {
+	Label        string          `json:"label"`
+	FieldName    string          `json:"fieldName"`
+	DefaultValue *UIDefaultValue `json:"defaultValue,omitempty"`
+}
+
+type UIDynamicSelectOption struct {
+	Label string          `json:"label"`
+	Value *UIDefaultValue `json:"value,omitempty"`
+}
+
+type UIFormInput struct {
+	ID          *string `json:"id,omitempty"`
+	Placeholder *string `json:"placeholder,omitempty"`
+	Value       *string `json:"value,omitempty"`
+	DataBind    *string `json:"dataBind,omitempty"`
+}
+
+func (UIFormInput) IsUIComponent()      {}
+func (this UIFormInput) GetID() *string { return this.ID }
+
+type UIImage struct {
+	ID  *string `json:"id,omitempty"`
+	URL *string `json:"url,omitempty"`
+	Alt *string `json:"alt,omitempty"`
+}
+
+func (UIImage) IsUIComponent()      {}
+func (this UIImage) GetID() *string { return this.ID }
+
+type UIMarkdown struct {
+	ID *string `json:"id,omitempty"`
+}
+
+func (UIMarkdown) IsUIComponent()      {}
+func (this UIMarkdown) GetID() *string { return this.ID }
+
+type UIRangeValidator struct {
+	Type    string `json:"type"`
+	Message string `json:"message"`
+	Min     int32  `json:"min"`
+	Max     int32  `json:"max"`
+}
+
+func (UIRangeValidator) IsUIDynamicValidator()   {}
+func (this UIRangeValidator) GetType() string    { return this.Type }
+func (this UIRangeValidator) GetMessage() string { return this.Message }
+
+type UIRegexValidator struct {
+	Type    string `json:"type"`
+	Message string `json:"message"`
+	Pattern string `json:"pattern"`
+}
+
+func (UIRegexValidator) IsUIDynamicValidator()   {}
+func (this UIRegexValidator) GetType() string    { return this.Type }
+func (this UIRegexValidator) GetMessage() string { return this.Message }
+
+type AppConnectorChipEnum string
+
+const (
+	AppConnectorChipEnumHostEnrichment AppConnectorChipEnum = "HOST_ENRICHMENT"
+	AppConnectorChipEnumCveVuln        AppConnectorChipEnum = "CVE_VULN"
+)
+
+var AllAppConnectorChipEnum = []AppConnectorChipEnum{
+	AppConnectorChipEnumHostEnrichment,
+	AppConnectorChipEnumCveVuln,
+}
+
+func (e AppConnectorChipEnum) IsValid() bool {
+	switch e {
+	case AppConnectorChipEnumHostEnrichment, AppConnectorChipEnumCveVuln:
+		return true
+	}
+	return false
+}
+
+func (e AppConnectorChipEnum) String() string {
+	return string(e)
+}
+
+func (e *AppConnectorChipEnum) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = AppConnectorChipEnum(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid AppConnectorChipEnum", str)
+	}
+	return nil
+}
+
+func (e AppConnectorChipEnum) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type AuthType string
@@ -209,5 +451,146 @@ func (e *CrowdStrikeFalconCloud) UnmarshalGQL(v any) error {
 }
 
 func (e CrowdStrikeFalconCloud) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type UIDDynamicFieldType string
+
+const (
+	UIDDynamicFieldTypeCheckbox UIDDynamicFieldType = "CHECKBOX"
+	UIDDynamicFieldTypeInput    UIDDynamicFieldType = "INPUT"
+	UIDDynamicFieldTypeRadio    UIDDynamicFieldType = "RADIO"
+	UIDDynamicFieldTypeSelect   UIDDynamicFieldType = "SELECT"
+	UIDDynamicFieldTypeTextarea UIDDynamicFieldType = "TEXTAREA"
+)
+
+var AllUIDDynamicFieldType = []UIDDynamicFieldType{
+	UIDDynamicFieldTypeCheckbox,
+	UIDDynamicFieldTypeInput,
+	UIDDynamicFieldTypeRadio,
+	UIDDynamicFieldTypeSelect,
+	UIDDynamicFieldTypeTextarea,
+}
+
+func (e UIDDynamicFieldType) IsValid() bool {
+	switch e {
+	case UIDDynamicFieldTypeCheckbox, UIDDynamicFieldTypeInput, UIDDynamicFieldTypeRadio, UIDDynamicFieldTypeSelect, UIDDynamicFieldTypeTextarea:
+		return true
+	}
+	return false
+}
+
+func (e UIDDynamicFieldType) String() string {
+	return string(e)
+}
+
+func (e *UIDDynamicFieldType) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = UIDDynamicFieldType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid UIDDynamicFieldType", str)
+	}
+	return nil
+}
+
+func (e UIDDynamicFieldType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type UIDefaultValueType string
+
+const (
+	UIDefaultValueTypeString UIDefaultValueType = "STRING"
+	UIDefaultValueTypeInt    UIDefaultValueType = "INT"
+	UIDefaultValueTypeBool   UIDefaultValueType = "BOOL"
+	UIDefaultValueTypeJSON   UIDefaultValueType = "JSON"
+)
+
+var AllUIDefaultValueType = []UIDefaultValueType{
+	UIDefaultValueTypeString,
+	UIDefaultValueTypeInt,
+	UIDefaultValueTypeBool,
+	UIDefaultValueTypeJSON,
+}
+
+func (e UIDefaultValueType) IsValid() bool {
+	switch e {
+	case UIDefaultValueTypeString, UIDefaultValueTypeInt, UIDefaultValueTypeBool, UIDefaultValueTypeJSON:
+		return true
+	}
+	return false
+}
+
+func (e UIDefaultValueType) String() string {
+	return string(e)
+}
+
+func (e *UIDefaultValueType) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = UIDefaultValueType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid UIDefaultValueType", str)
+	}
+	return nil
+}
+
+func (e UIDefaultValueType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type UIDynamicConditionOperator string
+
+const (
+	UIDynamicConditionOperatorEq  UIDynamicConditionOperator = "EQ"
+	UIDynamicConditionOperatorNeq UIDynamicConditionOperator = "NEQ"
+	UIDynamicConditionOperatorGt  UIDynamicConditionOperator = "GT"
+	UIDynamicConditionOperatorGte UIDynamicConditionOperator = "GTE"
+	UIDynamicConditionOperatorLt  UIDynamicConditionOperator = "LT"
+	UIDynamicConditionOperatorLte UIDynamicConditionOperator = "LTE"
+)
+
+var AllUIDynamicConditionOperator = []UIDynamicConditionOperator{
+	UIDynamicConditionOperatorEq,
+	UIDynamicConditionOperatorNeq,
+	UIDynamicConditionOperatorGt,
+	UIDynamicConditionOperatorGte,
+	UIDynamicConditionOperatorLt,
+	UIDynamicConditionOperatorLte,
+}
+
+func (e UIDynamicConditionOperator) IsValid() bool {
+	switch e {
+	case UIDynamicConditionOperatorEq, UIDynamicConditionOperatorNeq, UIDynamicConditionOperatorGt, UIDynamicConditionOperatorGte, UIDynamicConditionOperatorLt, UIDynamicConditionOperatorLte:
+		return true
+	}
+	return false
+}
+
+func (e UIDynamicConditionOperator) String() string {
+	return string(e)
+}
+
+func (e *UIDynamicConditionOperator) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = UIDynamicConditionOperator(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid UIDynamicConditionOperator", str)
+	}
+	return nil
+}
+
+func (e UIDynamicConditionOperator) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }

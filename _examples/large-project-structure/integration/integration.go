@@ -61,3 +61,70 @@ func (r *Resolver) AddIndicator(ctx context.Context, input model.IndicatorInput)
 		MetaSource:    input.MetaSource,
 	}, nil
 }
+
+func (r *Resolver) GetAppCrowdStrike(ctx context.Context) (*model.AppCrowdStrike, error) {
+
+	docUrl := "https://docs.corelight.com/docs/sensor/corelight-update/policyConfiguration/sources/integrations/crowdStrike.html#crowdstrike"
+	logoUrl := "https://it.lbl.gov/wp-content/uploads/sites/18/2023/02/crowdstrike-logo.png"
+	logoAlt := "CrowdStrike Falcon"
+
+	numColumns := int32(1)
+	firstStepDesc := "Lots of additional info or tooltip could be displayed here"
+	defaultValue := "dee-fault"
+	typeInput := model.UIDDynamicFieldTypeInput
+	typeSelect := model.UIDDynamicFieldTypeSelect
+
+	app := &model.AppCrowdStrike{
+		ID:          "AppCrowdStrike",
+		Name:        "CrowdStrike Falcon API",
+		Description: "Cybersecurity’s AI-native platform for the XDR era",
+		DocURL:      &docUrl,
+		Logo: &model.UIImage{
+			// FIXME: This should come from Fleet, no external dependencies
+			URL: &logoUrl,
+			Alt: &logoAlt,
+		},
+		Tags: &model.AppConnectorChip{
+			Chips: []model.AppConnectorChipEnum{
+				model.AppConnectorChipEnumHostEnrichment,
+				model.AppConnectorChipEnumCveVuln,
+			},
+		},
+		Items: []*model.UIDynamicFieldSet{
+			{
+				Columns:     &numColumns,
+				Label:       "First Step",
+				Description: &firstStepDesc,
+				Fields: []*model.UIDynamicField{
+					{
+						Label:       "thing1",
+						Description: &firstStepDesc,
+						Required:    true,
+						DefaultValue: &model.UIDefaultValue{
+							ValueType: &typeInput,
+							Value:     &defaultValue,
+						},
+					},
+					{
+						Label:       "thing2",
+						Description: &firstStepDesc,
+						Required:    true,
+						DefaultValue: &model.UIDefaultValue{
+							ValueType: &typeSelect,
+							Value:     &defaultValue,
+						},
+					},
+				},
+				Conditions: []*model.UIDynamicCondition{},
+			},
+			{
+				Columns:     &numColumns,
+				Label:       "Second Step, ahh yeah",
+				Description: &firstStepDesc,
+				Fields:      []*model.UIDynamicField{},
+				Conditions:  []*model.UIDynamicCondition{},
+			},
+		},
+	}
+	return app, nil
+}

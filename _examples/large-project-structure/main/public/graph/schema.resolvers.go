@@ -26,6 +26,51 @@ func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
 	}, nil
 }
 
+// func implementsInterface(typ *graphql.Type, interfaceName string) bool {
+// 	for _, iface := range typ.Interfaces() {
+// 		if iface.Name() == interfaceName {
+// 			return true
+// 		}
+// 	}
+// 	return false
+// }
+
+// ? allConnectorApps: [AppConnector!]!
+func (r *queryResolver) AllConnectorApps(ctx context.Context) ([]model.AppConnector, error) {
+	// 	q := `
+	// query IntrospectionQuery {
+	//   __schema {
+	//     types {
+	//       kind
+	//       name
+	//       interfaces {
+	//         name
+	//       }
+	//     }
+	//   }
+	// }
+	// // 	`
+	// 	// Execute the introspection query
+	// 	result, err := introspectionQuery(ctx)
+	// 	if err != nil {
+	// 		return nil, err
+	// 	}
+
+	// var implementations []string
+
+	// // Access the underlying schema
+	// publicES := main.GetPublicSomething()
+	// schema := publicES.Schema()
+	// for _, typ := range schema.Types {
+	// 	fmt.Println("types", typ)
+	// 	if typ.Kind == "OBJECT" && implementsInterface(typ, "AppConnector") {
+	// 		implementations = append(implementations, typ.Name)
+	// 	}
+	// }
+	// fmt.Println(implementations)
+	return nil, nil
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
