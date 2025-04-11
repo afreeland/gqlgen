@@ -18,6 +18,7 @@ type ExternalQueryResolver interface {
 	GetYaSome(context.Context, *model.CustomInput) ([]*model.CustomZeekIntel, error)
 
 	GetAppCrowdStrike(ctx context.Context) (*model.AppCrowdStrike, error)
+	AddIndicator(ctx context.Context, input model.IndicatorInput) (*model.Indicator, error)
 }
 
 type Resolver struct {

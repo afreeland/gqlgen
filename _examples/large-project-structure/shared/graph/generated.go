@@ -164,8 +164,10 @@ type ComplexityRoot struct {
 		FieldName    func(childComplexity int) int
 		ID           func(childComplexity int) int
 		Label        func(childComplexity int) int
+		Options      func(childComplexity int) int
 		Required     func(childComplexity int) int
 		Type         func(childComplexity int) int
+		Validator    func(childComplexity int) int
 	}
 
 	UIDynamicFieldSet struct {
@@ -686,6 +688,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UIDynamicField.Label(childComplexity), true
 
+	case "UIDynamicField.options":
+		if e.complexity.UIDynamicField.Options == nil {
+			break
+		}
+
+		return e.complexity.UIDynamicField.Options(childComplexity), true
+
 	case "UIDynamicField.required":
 		if e.complexity.UIDynamicField.Required == nil {
 			break
@@ -699,6 +708,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.UIDynamicField.Type(childComplexity), true
+
+	case "UIDynamicField.validator":
+		if e.complexity.UIDynamicField.Validator == nil {
+			break
+		}
+
+		return e.complexity.UIDynamicField.Validator(childComplexity), true
 
 	case "UIDynamicFieldSet.columns":
 		if e.complexity.UIDynamicFieldSet.Columns == nil {
@@ -970,7 +986,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 	return introspection.WrapTypeFromDef(ec.Schema(), ec.Schema().Types[name]), nil
 }
 
-//go:embed "schema.graphqls"
+//go:embed "schema.graphqls" "ui.graphqls"
 var sourcesFS embed.FS
 
 func sourceData(filename string) string {
@@ -983,6 +999,7 @@ func sourceData(filename string) string {
 
 var sources = []*ast.Source{
 	{Name: "schema.graphqls", Input: sourceData("schema.graphqls"), BuiltIn: false},
+	{Name: "ui.graphqls", Input: sourceData("ui.graphqls"), BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
@@ -3576,9 +3593,9 @@ func (ec *executionContext) _UIDefaultValue_valueType(ctx context.Context, field
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.UIDDynamicFieldType)
+	res := resTmp.(*model.UIDefaultValueType)
 	fc.Result = res
-	return ec.marshalOUIDDynamicFieldType2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋsharedᚋgraphᚋmodelᚐUIDDynamicFieldType(ctx, field.Selections, res)
+	return ec.marshalOUIDefaultValueType2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋsharedᚋgraphᚋmodelᚐUIDefaultValueType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_UIDefaultValue_valueType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3588,7 +3605,7 @@ func (ec *executionContext) fieldContext_UIDefaultValue_valueType(_ context.Cont
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type UIDDynamicFieldType does not have child fields")
+			return nil, errors.New("field of type UIDefaultValueType does not have child fields")
 		},
 	}
 	return fc, nil
@@ -3743,9 +3760,9 @@ func (ec *executionContext) _UIDynamicCondition_expectedValue(ctx context.Contex
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.UIDefaultValueType)
+	res := resTmp.(*model.UIDefaultValue)
 	fc.Result = res
-	return ec.marshalOUIDefaultValueType2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋsharedᚋgraphᚋmodelᚐUIDefaultValueType(ctx, field.Selections, res)
+	return ec.marshalOUIDefaultValue2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋsharedᚋgraphᚋmodelᚐUIDefaultValue(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_UIDynamicCondition_expectedValue(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3755,7 +3772,13 @@ func (ec *executionContext) fieldContext_UIDynamicCondition_expectedValue(_ cont
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type UIDefaultValueType does not have child fields")
+			switch field.Name {
+			case "valueType":
+				return ec.fieldContext_UIDefaultValue_valueType(ctx, field)
+			case "value":
+				return ec.fieldContext_UIDefaultValue_value(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UIDefaultValue", field.Name)
 		},
 	}
 	return fc, nil
@@ -4063,6 +4086,97 @@ func (ec *executionContext) fieldContext_UIDynamicField_defaultValue(_ context.C
 	return fc, nil
 }
 
+func (ec *executionContext) _UIDynamicField_validator(ctx context.Context, field graphql.CollectedField, obj *model.UIDynamicField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UIDynamicField_validator(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Validator, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(model.UIDynamicValidator)
+	fc.Result = res
+	return ec.marshalOUIDynamicValidator2githubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋsharedᚋgraphᚋmodelᚐUIDynamicValidator(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UIDynamicField_validator(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UIDynamicField",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("FieldContext.Child cannot be called on type INTERFACE")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UIDynamicField_options(ctx context.Context, field graphql.CollectedField, obj *model.UIDynamicField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UIDynamicField_options(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Options, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.UIDynamicSelectOption)
+	fc.Result = res
+	return ec.marshalNUIDynamicSelectOption2ᚕᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋsharedᚋgraphᚋmodelᚐUIDynamicSelectOptionᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UIDynamicField_options(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UIDynamicField",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "label":
+				return ec.fieldContext_UIDynamicSelectOption_label(ctx, field)
+			case "value":
+				return ec.fieldContext_UIDynamicSelectOption_value(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UIDynamicSelectOption", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _UIDynamicFieldSet_id(ctx context.Context, field graphql.CollectedField, obj *model.UIDynamicFieldSet) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UIDynamicFieldSet_id(ctx, field)
 	if err != nil {
@@ -4283,6 +4397,10 @@ func (ec *executionContext) fieldContext_UIDynamicFieldSet_fields(_ context.Cont
 				return ec.fieldContext_UIDynamicField_required(ctx, field)
 			case "defaultValue":
 				return ec.fieldContext_UIDynamicField_defaultValue(ctx, field)
+			case "validator":
+				return ec.fieldContext_UIDynamicField_validator(ctx, field)
+			case "options":
+				return ec.fieldContext_UIDynamicField_options(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UIDynamicField", field.Name)
 		},
@@ -8166,6 +8284,13 @@ func (ec *executionContext) _UIDynamicField(ctx context.Context, sel ast.Selecti
 			}
 		case "defaultValue":
 			out.Values[i] = ec._UIDynamicField_defaultValue(ctx, field, obj)
+		case "validator":
+			out.Values[i] = ec._UIDynamicField_validator(ctx, field, obj)
+		case "options":
+			out.Values[i] = ec._UIDynamicField_options(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -9272,6 +9397,60 @@ func (ec *executionContext) marshalNUIDynamicField2ᚖgithubᚗcomᚋ99designs�
 	return ec._UIDynamicField(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNUIDynamicSelectOption2ᚕᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋsharedᚋgraphᚋmodelᚐUIDynamicSelectOptionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.UIDynamicSelectOption) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNUIDynamicSelectOption2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋsharedᚋgraphᚋmodelᚐUIDynamicSelectOption(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNUIDynamicSelectOption2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋsharedᚋgraphᚋmodelᚐUIDynamicSelectOption(ctx context.Context, sel ast.SelectionSet, v *model.UIDynamicSelectOption) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UIDynamicSelectOption(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
 	return ec.___Directive(ctx, sel, &v)
 }
@@ -9687,6 +9866,13 @@ func (ec *executionContext) marshalOUIDynamicConditionOperator2ᚖgithubᚗcom�
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) marshalOUIDynamicValidator2githubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋsharedᚋgraphᚋmodelᚐUIDynamicValidator(ctx context.Context, sel ast.SelectionSet, v model.UIDynamicValidator) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._UIDynamicValidator(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOUIImage2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋ_examplesᚋlargeᚑprojectᚑstructureᚋsharedᚋgraphᚋmodelᚐUIImage(ctx context.Context, sel ast.SelectionSet, v *model.UIImage) graphql.Marshaler {
