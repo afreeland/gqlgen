@@ -21,7 +21,29 @@ Default.args = {
           "alt": "CrowdStrike Falcon",
           "__typename": "UIImage"
         },
-        "carousel": null,
+        "carousel": {
+          "items": [
+            {
+              "image": {
+                "alt": "Slide 1",
+                "url": "https://i.redd.it/h0d3v4y8xg221.jpg",
+                "__typename": "UIImage"
+              },
+              "text": "Slide 1",
+              "__typename": "UICarouselItem"
+            },
+            {
+              "image": {
+                "alt": "Slide 2",
+                "url": "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/i/45fb71b4-b618-45ed-b0ef-ddf151262ba5/dc3zd7q-4d0b022a-07db-444f-988e-63abfc2d2a71.png",
+                "__typename": "UIImage"
+              },
+              "text": "Slide 2",
+              "__typename": "UICarouselItem"
+            }
+          ],
+          "__typename": "UICarousel"
+        },
         "tags": {
           "chips": [
             "HOST_ENRICHMENT",
@@ -50,6 +72,7 @@ Default.args = {
                   "message": "thing1 must be in the following format: word1",
                   "pattern": "\\w\\d+"
                 },
+                "options": [],
                 "__typename": "UIDynamicField"
               },
               {
@@ -63,6 +86,22 @@ Default.args = {
                   "value": "dee-fault"
                 },
                 "validator": null,
+                "options": [
+                  {
+                    "label": "Option 1",
+                    "value": {
+                      "valueType": "STRING",
+                      "value": "dee-fault"
+                    }
+                  },
+                  {
+                    "label": "Option 2",
+                    "value": {
+                      "valueType": "STRING",
+                      "value": "dee-fault"
+                    }
+                  }
+                ],
                 "__typename": "UIDynamicField"
               },
               {
@@ -81,6 +120,7 @@ Default.args = {
                   "min": 0,
                   "max": 5
                 },
+                "options": [],
                 "__typename": "UIDynamicField"
               }
             ],
@@ -116,6 +156,7 @@ Default.args = {
                   "min": 0,
                   "max": 1000
                 },
+                "options": [],
                 "__typename": "UIDynamicField"
               },
               {
@@ -134,6 +175,7 @@ Default.args = {
                   "min": 0,
                   "max": 1000
                 },
+                "options": [],
                 "__typename": "UIDynamicField"
               }
             ],
@@ -159,4 +201,4 @@ Default.args = {
         ]
       }
     }
-  };
+  }

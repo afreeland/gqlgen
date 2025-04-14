@@ -19,6 +19,7 @@ type ExternalQueryResolver interface {
 
 	GetAppCrowdStrike(ctx context.Context) (*model.AppCrowdStrike, error)
 	AddIndicator(ctx context.Context, input model.IndicatorInput) (*model.Indicator, error)
+	// I added this
 }
 
 type Resolver struct {

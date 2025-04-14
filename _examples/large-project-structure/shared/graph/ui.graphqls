@@ -86,7 +86,12 @@ enum UIDefaultValueType {
   STRING
   INT
   BOOL
+  # Think more through JSON (JSONArray, JSONObject?)
   JSON
+  # key1=value1, key2=value2,
+  # {key1:value, key2=value2}
+
+  # Array[type]
 }
 
 enum UIDDynamicFieldType {
@@ -122,6 +127,7 @@ type UIDynamicField {
   required: Boolean!
   defaultValue: UIDefaultValue
 
+  # FIXME: should be an array
   validator: UIDynamicValidator
 
   # not ideal but options can live here for now...
