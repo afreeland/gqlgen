@@ -67,11 +67,13 @@ func main() {
 		Resolvers: &public_graph.Resolver{
 			ExternalQueryResolver: &integration.Resolver{
 				Logger: func(log *logrus.Logger) *logrus.Entry {
+					// Clone the mainLoggerEntry with a different namespace
 					return log.WithFields(logrus.Fields{
 						"namespace": "integration",
 					})
 				}(log),
 			},
+			// Add other team resolvers here
 		},
 	}))
 
