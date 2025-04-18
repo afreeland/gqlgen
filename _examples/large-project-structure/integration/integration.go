@@ -96,7 +96,10 @@ func (r *Resolver) GetAppCrowdStrike(ctx context.Context) (*model.AppCrowdStrike
 		ID:          "AppCrowdStrike",
 		Name:        "CrowdStrike Falcon API",
 		Description: "Cybersecurity’s AI-native platform for the XDR era",
-		DocURL:      &docUrl,
+		Readme: &model.UIMarkdown{
+			ID: nil,
+		},
+		DocURL: &docUrl,
 		Carousel: &model.UICarousel{
 			Items: []*model.UICarouselItem{
 				{
