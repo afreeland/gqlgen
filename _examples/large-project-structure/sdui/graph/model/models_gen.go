@@ -3,6 +3,7 @@
 package model
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"strconv"
@@ -20,21 +21,9 @@ type AppConnector interface {
 	GetTags() *AppConnectorChip
 }
 
-type AuthInfo interface {
-	IsAuthInfo()
-	GetType() AuthType
-}
-
 type Chip interface {
 	IsChip()
 	GetID() *string
-}
-
-type ConnectionInfo interface {
-	IsConnectionInfo()
-	GetID() string
-	GetType() ConnectorType
-	GetAuthInfo() AuthInfo
 }
 
 type UIComponent interface {
@@ -55,12 +44,6 @@ type UIPanel interface {
 	GetColumns() int32
 }
 
-type ZeekIntel interface {
-	IsZeekIntel()
-	GetID() string
-	GetName() string
-}
-
 type AppConnectorChip struct {
 	ID    *string                `json:"id,omitempty"`
 	Chips []AppConnectorChipEnum `json:"chips"`
@@ -68,96 +51,6 @@ type AppConnectorChip struct {
 
 func (AppConnectorChip) IsChip()             {}
 func (this AppConnectorChip) GetID() *string { return this.ID }
-
-type Basic struct {
-	Username string  `json:"username"`
-	Password *string `json:"password,omitempty"`
-}
-
-type BasicAuthInfo struct {
-	Type   AuthType `json:"type"`
-	Config *Basic   `json:"config"`
-}
-
-func (BasicAuthInfo) IsAuthInfo()            {}
-func (this BasicAuthInfo) GetType() AuthType { return this.Type }
-
-type ContentUpdatePolicy struct {
-	Applied            *bool   `json:"applied,omitempty"`
-	AppliedDate        *string `json:"appliedDate,omitempty"`
-	AssignedDate       *string `json:"assignedDate,omitempty"`
-	LastEvaluationDate *string `json:"lastEvaluationDate,omitempty"`
-	PolicyID           *string `json:"policyId,omitempty"`
-	PolicyType         *string `json:"policyType,omitempty"`
-	RuleGroups         *string `json:"ruleGroups,omitempty"`
-	SettingsHash       *string `json:"settingsHash,omitempty"`
-}
-
-type CrowdStrikeFalconConnection struct {
-	ID       string                  `json:"id"`
-	Type     ConnectorType           `json:"type"`
-	AuthInfo AuthInfo                `json:"authInfo,omitempty"`
-	Cloud    *CrowdStrikeFalconCloud `json:"cloud,omitempty"`
-}
-
-func (CrowdStrikeFalconConnection) IsConnectionInfo()           {}
-func (this CrowdStrikeFalconConnection) GetID() string          { return this.ID }
-func (this CrowdStrikeFalconConnection) GetType() ConnectorType { return this.Type }
-func (this CrowdStrikeFalconConnection) GetAuthInfo() AuthInfo  { return this.AuthInfo }
-
-type DevicePolicies struct {
-	ContentUpdate *ContentUpdatePolicy `json:"contentUpdate,omitempty"`
-}
-
-type GeneralMessage struct {
-	Success bool    `json:"success"`
-	Message *string `json:"message,omitempty"`
-}
-
-type HostDetail struct {
-	AgentLoadFlags       *string         `json:"agentLoadFlags,omitempty"`
-	AgentLocalTime       *string         `json:"agentLocalTime,omitempty"`
-	AgentVersion         *string         `json:"agentVersion,omitempty"`
-	BiosManufacturer     *string         `json:"biosManufacturer,omitempty"`
-	BiosVersion          *string         `json:"biosVersion,omitempty"`
-	ChassisType          *string         `json:"chassisType,omitempty"`
-	ChassisTypeDesc      *string         `json:"chassisTypeDesc,omitempty"`
-	Cid                  *string         `json:"cid,omitempty"`
-	ConfigIDBase         *string         `json:"configIdBase,omitempty"`
-	ConfigIDBuild        *string         `json:"configIdBuild,omitempty"`
-	ConfigIDPlatform     *string         `json:"configIdPlatform,omitempty"`
-	ConnectionIP         *string         `json:"connectionIp,omitempty"`
-	ConnectionMacAddress *string         `json:"connectionMacAddress,omitempty"`
-	CPUSignature         *string         `json:"cpuSignature,omitempty"`
-	CPUVendor            *string         `json:"cpuVendor,omitempty"`
-	DefaultGatewayIP     *string         `json:"defaultGatewayIp,omitempty"`
-	DeploymentType       *string         `json:"deploymentType,omitempty"`
-	DeviceID             *string         `json:"deviceId,omitempty"`
-	DevicePolicies       *DevicePolicies `json:"devicePolicies,omitempty"`
-}
-
-type Mutation struct {
-}
-
-type NoAuthInfo struct {
-	Type AuthType `json:"type"`
-}
-
-func (NoAuthInfo) IsAuthInfo()            {}
-func (this NoAuthInfo) GetType() AuthType { return this.Type }
-
-type OAuth2 struct {
-	ClientID    string `json:"clientId"`
-	ClientToken string `json:"clientToken"`
-}
-
-type OAuth2AuthInfo struct {
-	Type   AuthType `json:"type"`
-	Config *OAuth2  `json:"config"`
-}
-
-func (OAuth2AuthInfo) IsAuthInfo()            {}
-func (this OAuth2AuthInfo) GetType() AuthType { return this.Type }
 
 type Query struct {
 }
@@ -285,12 +178,6 @@ func (UIRegexValidator) IsUIDynamicValidator()   {}
 func (this UIRegexValidator) GetType() string    { return this.Type }
 func (this UIRegexValidator) GetMessage() string { return this.Message }
 
-type FetchCrowdStrikeIntelInput struct {
-	URL     string  `json:"url"`
-	Option1 *string `json:"option1,omitempty"`
-	Option2 *string `json:"option2,omitempty"`
-}
-
 type AppConnectorChipEnum string
 
 const (
@@ -332,137 +219,18 @@ func (e AppConnectorChipEnum) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-type AuthType string
-
-const (
-	AuthTypeOauth2 AuthType = "OAUTH2"
-	AuthTypeBasic  AuthType = "BASIC"
-	AuthTypeNone   AuthType = "NONE"
-)
-
-var AllAuthType = []AuthType{
-	AuthTypeOauth2,
-	AuthTypeBasic,
-	AuthTypeNone,
-}
-
-func (e AuthType) IsValid() bool {
-	switch e {
-	case AuthTypeOauth2, AuthTypeBasic, AuthTypeNone:
-		return true
+func (e *AppConnectorChipEnum) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
 	}
-	return false
+	return e.UnmarshalGQL(s)
 }
 
-func (e AuthType) String() string {
-	return string(e)
-}
-
-func (e *AuthType) UnmarshalGQL(v any) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = AuthType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid AuthType", str)
-	}
-	return nil
-}
-
-func (e AuthType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type ConnectorType string
-
-const (
-	ConnectorTypeAlienvault        ConnectorType = "ALIENVAULT"
-	ConnectorTypeCrowdstrikeFalcon ConnectorType = "CROWDSTRIKE_FALCON"
-	ConnectorTypeMandiant          ConnectorType = "MANDIANT"
-	ConnectorTypeValhalla          ConnectorType = "VALHALLA"
-)
-
-var AllConnectorType = []ConnectorType{
-	ConnectorTypeAlienvault,
-	ConnectorTypeCrowdstrikeFalcon,
-	ConnectorTypeMandiant,
-	ConnectorTypeValhalla,
-}
-
-func (e ConnectorType) IsValid() bool {
-	switch e {
-	case ConnectorTypeAlienvault, ConnectorTypeCrowdstrikeFalcon, ConnectorTypeMandiant, ConnectorTypeValhalla:
-		return true
-	}
-	return false
-}
-
-func (e ConnectorType) String() string {
-	return string(e)
-}
-
-func (e *ConnectorType) UnmarshalGQL(v any) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = ConnectorType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid ConnectorType", str)
-	}
-	return nil
-}
-
-func (e ConnectorType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type CrowdStrikeFalconCloud string
-
-const (
-	CrowdStrikeFalconCloudUs1    CrowdStrikeFalconCloud = "US_1"
-	CrowdStrikeFalconCloudUs2    CrowdStrikeFalconCloud = "US_2"
-	CrowdStrikeFalconCloudEu1    CrowdStrikeFalconCloud = "EU_1"
-	CrowdStrikeFalconCloudUsGov1 CrowdStrikeFalconCloud = "US_GOV_1"
-)
-
-var AllCrowdStrikeFalconCloud = []CrowdStrikeFalconCloud{
-	CrowdStrikeFalconCloudUs1,
-	CrowdStrikeFalconCloudUs2,
-	CrowdStrikeFalconCloudEu1,
-	CrowdStrikeFalconCloudUsGov1,
-}
-
-func (e CrowdStrikeFalconCloud) IsValid() bool {
-	switch e {
-	case CrowdStrikeFalconCloudUs1, CrowdStrikeFalconCloudUs2, CrowdStrikeFalconCloudEu1, CrowdStrikeFalconCloudUsGov1:
-		return true
-	}
-	return false
-}
-
-func (e CrowdStrikeFalconCloud) String() string {
-	return string(e)
-}
-
-func (e *CrowdStrikeFalconCloud) UnmarshalGQL(v any) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = CrowdStrikeFalconCloud(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid CrowdStrikeFalconCloud", str)
-	}
-	return nil
-}
-
-func (e CrowdStrikeFalconCloud) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
+func (e AppConnectorChipEnum) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type UIDDynamicFieldType string
@@ -512,6 +280,20 @@ func (e UIDDynamicFieldType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+func (e *UIDDynamicFieldType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e UIDDynamicFieldType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
 type UIDefaultValueType string
 
 const (
@@ -555,6 +337,20 @@ func (e *UIDefaultValueType) UnmarshalGQL(v any) error {
 
 func (e UIDefaultValueType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *UIDefaultValueType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e UIDefaultValueType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type UIDynamicConditionOperator string
@@ -612,4 +408,18 @@ func (e *UIDynamicConditionOperator) UnmarshalGQL(v any) error {
 
 func (e UIDynamicConditionOperator) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *UIDynamicConditionOperator) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e UIDynamicConditionOperator) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
