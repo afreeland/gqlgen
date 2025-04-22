@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"slices"
 	"syscall"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -90,6 +91,7 @@ func main() {
 		log.Println("Parsed Schema: ", parsedSchema)
 	}
 
+	var AppConnectorMethods []string
 	var AppConnectorInterfaceTypes []string
 
 	for key, obj := range parsedSchema.Types {
@@ -101,8 +103,14 @@ func main() {
 		}
 	}
 
-	if len(AppConnectorInterfaceTypes) > 0 {
-		public_graph.PublicAppConnectorInterfaceTypes = AppConnectorInterfaceTypes
+	for _, obj := range parsedSchema.Query.Fields {
+		if slices.Contains(AppConnectorInterfaceTypes, obj.Type.NamedType) {
+			AppConnectorMethods = append(AppConnectorMethods, obj.Name)
+		}
+	}
+
+	if len(AppConnectorMethods) > 0 {
+		public_graph.PublicAppConnectorMethods = AppConnectorMethods
 	}
 
 	// Create a new executable schema with the composed resolver

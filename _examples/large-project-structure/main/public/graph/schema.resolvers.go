@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"reflect"
+	"strings"
 
 	"github.com/99designs/gqlgen/_examples/large-project-structure/main/public/graph/model"
 )
@@ -76,59 +77,39 @@ var typeRegistry = make(map[string]reflect.Type)
 	}
 */
 
-var PublicAppConnectorInterfaceTypes []string
+var PublicAppConnectorMethods []string
 
-// Derive the Get method name from the AppConnector type name
-func deriveGetMethodName(typeName string) string {
-	return "Get" + typeName
-}
-
-// Check if a type name is present in the PublicAppConnectorInterfaceTypes slice
-func isTypeInPublicAppConnectorInterfaceTypes(typeName string) bool {
-	for _, t := range PublicAppConnectorInterfaceTypes {
-		if t == typeName {
-			return true
-		}
-	}
-	return false
-}
-
-// DynamicFetchAppConnector is a utility function that dynamically derives and calls the AppConnector's Get method
-func (r *queryResolver) DynamicFetchAppConnector(ctx context.Context, typeName string) (model.AppConnector, error) {
-	if isTypeInPublicAppConnectorInterfaceTypes(typeName) {
-		methodName := deriveGetMethodName(typeName)
-
-		// Use reflection to dynamically call the method
-		resolverValue := reflect.ValueOf(r.ExternalQueryResolver)
-		method := resolverValue.MethodByName(methodName)
-		if !method.IsValid() {
-			return nil, fmt.Errorf("method %s does not exist on ExternalQueryResolver", methodName)
-		}
-
-		// Call the method with the necessary arguments (e.g., context)
-		results := method.Call([]reflect.Value{reflect.ValueOf(ctx)})
-
-		// Handle the results
-		if len(results) != 2 {
-			return nil, fmt.Errorf("unexpected number of results from %s", methodName)
-		}
-
-		if !results[1].IsNil() {
-			errInterface := results[1].Interface()
-			if err, ok := errInterface.(error); ok {
-				return nil, err
-			}
-		}
-
-		// Assert the result to the AppConnector interface
-		if appConnector, ok := results[0].Interface().(model.AppConnector); ok {
-			return appConnector, nil
-		}
-
-		return nil, fmt.Errorf("result from %s is not a valid AppConnector", methodName)
+// DynamicCallAppConnectorMethod is a utility function that calls an AppConnector method by name string
+func (r *queryResolver) DynamicCallAppConnectorMethod(ctx context.Context, methodName string) (model.AppConnector, error) {
+	appConnectorMethod := strings.Title(methodName)
+	// Use reflection to call the method
+	resolverValue := reflect.ValueOf(r.ExternalQueryResolver)
+	method := resolverValue.MethodByName(appConnectorMethod)
+	if !method.IsValid() {
+		return nil, fmt.Errorf("method %s does not exist on ExternalQueryResolver", appConnectorMethod)
 	}
 
-	logrus.Warnf("%s is not in PublicAppConnectorInterfaceTypes", typeName)
+	// Call the method with the necessary arguments (e.g., context)
+	results := method.Call([]reflect.Value{reflect.ValueOf(ctx)})
+
+	// Handle the results
+	if len(results) != 2 {
+		return nil, fmt.Errorf("unexpected number of results from %s", appConnectorMethod)
+	}
+
+	if !results[1].IsNil() {
+		errInterface := results[1].Interface()
+		if err, ok := errInterface.(error); ok {
+			return nil, err
+		}
+	}
+
+	// Assert the result to the AppConnector interface
+	if appConnector, ok := results[0].Interface().(model.AppConnector); ok {
+		return appConnector, nil
+	}
+
+	logrus.Warnf("%s is not in PublicAppConnectorInterfaceTypes", appConnectorMethod)
 	return nil, nil
 }
 
@@ -136,8 +117,8 @@ func (r *queryResolver) DynamicFetchAppConnector(ctx context.Context, typeName s
 func (r *queryResolver) AllConnectorApps(ctx context.Context) ([]model.AppConnector, error) {
 	var connectors []model.AppConnector
 
-	for _, typeName := range PublicAppConnectorInterfaceTypes {
-		appConnector, err := r.DynamicFetchAppConnector(ctx, typeName)
+	for _, methodName := range PublicAppConnectorMethods {
+		appConnector, err := r.DynamicCallAppConnectorMethod(ctx, methodName)
 		if err != nil {
 			logrus.Error(err)
 			continue
