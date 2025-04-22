@@ -1,5 +1,6 @@
 # Where are all the schema files located? globs are supported eg  src/**/*.graphqls
 schema:
+  - ../../sdui/graph/schema.graphqls
   - ../../shared/graph/schema.graphqls
   - graph/*.graphqls
 

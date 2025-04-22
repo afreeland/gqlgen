@@ -220,24 +220,26 @@ func (UICarouselItem) IsUIComponent()      {}
 func (this UICarouselItem) GetID() *string { return this.ID }
 
 type UIDefaultValue struct {
-	ValueType *UIDDynamicFieldType `json:"valueType,omitempty"`
-	Value     *string              `json:"value,omitempty"`
+	ValueType *UIDefaultValueType `json:"valueType,omitempty"`
+	Value     *string             `json:"value,omitempty"`
 }
 
 type UIDynamicCondition struct {
 	FieldName     string                      `json:"fieldName"`
 	Operator      *UIDynamicConditionOperator `json:"operator,omitempty"`
-	ExpectedValue *UIDefaultValueType         `json:"expectedValue,omitempty"`
+	ExpectedValue *UIDefaultValue             `json:"expectedValue,omitempty"`
 }
 
 type UIDynamicField struct {
-	ID           *string              `json:"id,omitempty"`
-	Type         *UIDDynamicFieldType `json:"type,omitempty"`
-	Description  *string              `json:"description,omitempty"`
-	Label        string               `json:"label"`
-	FieldName    string               `json:"fieldName"`
-	Required     bool                 `json:"required"`
-	DefaultValue *UIDefaultValue      `json:"defaultValue,omitempty"`
+	ID           *string                  `json:"id,omitempty"`
+	Type         *UIDDynamicFieldType     `json:"type,omitempty"`
+	Description  *string                  `json:"description,omitempty"`
+	Label        string                   `json:"label"`
+	FieldName    string                   `json:"fieldName"`
+	Required     bool                     `json:"required"`
+	DefaultValue *UIDefaultValue          `json:"defaultValue,omitempty"`
+	Validator    UIDynamicValidator       `json:"validator,omitempty"`
+	Options      []*UIDynamicSelectOption `json:"options"`
 }
 
 type UIDynamicFieldSet struct {
@@ -625,12 +627,16 @@ func (e UIDefaultValueType) MarshalGQL(w io.Writer) {
 type UIDynamicConditionOperator string
 
 const (
-	UIDynamicConditionOperatorEq  UIDynamicConditionOperator = "EQ"
-	UIDynamicConditionOperatorNeq UIDynamicConditionOperator = "NEQ"
-	UIDynamicConditionOperatorGt  UIDynamicConditionOperator = "GT"
-	UIDynamicConditionOperatorGte UIDynamicConditionOperator = "GTE"
-	UIDynamicConditionOperatorLt  UIDynamicConditionOperator = "LT"
-	UIDynamicConditionOperatorLte UIDynamicConditionOperator = "LTE"
+	UIDynamicConditionOperatorEq      UIDynamicConditionOperator = "EQ"
+	UIDynamicConditionOperatorNeq     UIDynamicConditionOperator = "NEQ"
+	UIDynamicConditionOperatorGt      UIDynamicConditionOperator = "GT"
+	UIDynamicConditionOperatorGte     UIDynamicConditionOperator = "GTE"
+	UIDynamicConditionOperatorLt      UIDynamicConditionOperator = "LT"
+	UIDynamicConditionOperatorLte     UIDynamicConditionOperator = "LTE"
+	UIDynamicConditionOperatorExists  UIDynamicConditionOperator = "EXISTS"
+	UIDynamicConditionOperatorNexists UIDynamicConditionOperator = "NEXISTS"
+	UIDynamicConditionOperatorNull    UIDynamicConditionOperator = "NULL"
+	UIDynamicConditionOperatorNnull   UIDynamicConditionOperator = "NNULL"
 )
 
 var AllUIDynamicConditionOperator = []UIDynamicConditionOperator{
@@ -640,11 +646,15 @@ var AllUIDynamicConditionOperator = []UIDynamicConditionOperator{
 	UIDynamicConditionOperatorGte,
 	UIDynamicConditionOperatorLt,
 	UIDynamicConditionOperatorLte,
+	UIDynamicConditionOperatorExists,
+	UIDynamicConditionOperatorNexists,
+	UIDynamicConditionOperatorNull,
+	UIDynamicConditionOperatorNnull,
 }
 
 func (e UIDynamicConditionOperator) IsValid() bool {
 	switch e {
-	case UIDynamicConditionOperatorEq, UIDynamicConditionOperatorNeq, UIDynamicConditionOperatorGt, UIDynamicConditionOperatorGte, UIDynamicConditionOperatorLt, UIDynamicConditionOperatorLte:
+	case UIDynamicConditionOperatorEq, UIDynamicConditionOperatorNeq, UIDynamicConditionOperatorGt, UIDynamicConditionOperatorGte, UIDynamicConditionOperatorLt, UIDynamicConditionOperatorLte, UIDynamicConditionOperatorExists, UIDynamicConditionOperatorNexists, UIDynamicConditionOperatorNull, UIDynamicConditionOperatorNnull:
 		return true
 	}
 	return false
