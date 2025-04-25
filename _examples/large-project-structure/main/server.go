@@ -17,7 +17,6 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/lru"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/djang0man/sdui/copyschemas"
 	"github.com/sirupsen/logrus"
 	"github.com/vektah/gqlparser/v2/ast"
 
@@ -31,16 +30,6 @@ const privatePort = "8081"
 var publicExecutableSchema graphql.ExecutableSchema
 
 func main() {
-	copiedFiles, err := copyschemas.CopyGraphqlSchemas("../")
-	if err != nil {
-		fmt.Printf("Error: %s\n", err)
-		return
-	}
-
-	for _, path := range copiedFiles {
-		fmt.Println(path)
-	}
-
 	publicPort := os.Getenv("PORT")
 	if publicPort == "" {
 		publicPort = defaultPort

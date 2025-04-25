@@ -6,7 +6,6 @@ require (
 	github.com/99designs/gqlgen v0.17.72
 	github.com/99designs/gqlgen/_examples/large-project-structure/integration v0.0.0-00010101000000-000000000000
 	github.com/99designs/gqlgen/_examples/large-project-structure/shared v0.0.0
-	github.com/djang0man/sdui v0.0.3
 	github.com/sirupsen/logrus v1.9.3
 	github.com/vektah/gqlparser/v2 v2.5.26
 )

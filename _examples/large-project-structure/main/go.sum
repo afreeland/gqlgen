@@ -23,12 +23,6 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dgryski/trifles v0.0.0-20230903005119-f50d829f2e54 h1:SG7nF6SRlWhcT7cNTs5R6Hk4V2lcmLz2NsG2VnInyNo=
 github.com/dgryski/trifles v0.0.0-20230903005119-f50d829f2e54/go.mod h1:if7Fbed8SFyPtHLHbg49SI7NAdJiC5WIA09pe59rfAA=
-github.com/djang0man/sdui v0.0.1 h1:2yPkCJGI6FhMGOyyPeDshmGa/ByOZRS5ngkwEqEQoO0=
-github.com/djang0man/sdui v0.0.1/go.mod h1:SgHKH1a/wygVw9QGGjPfvg2Pm5ETc+3X0lHYz5DxAKc=
-github.com/djang0man/sdui v0.0.2 h1:bIAcR0bFBpfJ4RezPgP4lSXYMe2LV6qWvmpgmt0O0l4=
-github.com/djang0man/sdui v0.0.2/go.mod h1:SgHKH1a/wygVw9QGGjPfvg2Pm5ETc+3X0lHYz5DxAKc=
-github.com/djang0man/sdui v0.0.3 h1:km7JwkVBFOXDcfk991Q9eM8Lf+621nkMfEzMeo/HJoI=
-github.com/djang0man/sdui v0.0.3/go.mod h1:SgHKH1a/wygVw9QGGjPfvg2Pm5ETc+3X0lHYz5DxAKc=
 github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
 github.com/go-logr/logr v1.3.0 h1:2y3SDp0ZXuc6/cjLSZ+Q3ir+QB9T/iG5yYRXqsagWSY=
 github.com/go-logr/logr v1.3.0/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
