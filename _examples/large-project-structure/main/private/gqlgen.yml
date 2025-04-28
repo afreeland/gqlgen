@@ -1,8 +1,8 @@
 # Where are all the schema files located? globs are supported eg  src/**/*.graphqls
 schema:
-  - ../../sdui/graph/*.graphqls
   - ../../shared/graph/*.graphqls
   - graph/*.graphqls
+  - ../../graphql/*.graphqls
   - ../../integration/private/graph/schema.graphqls
 
 # Where should the generated server code go?

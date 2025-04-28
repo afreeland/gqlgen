@@ -8,6 +8,8 @@ build:
 
 run:
 	./$(BINARY_NAME) --destdir=$(DESTDIR)
+	cd ./main
+	go generate ./...
 
 clean:
 	rm -f $(BINARY_NAME)
