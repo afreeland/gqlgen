@@ -7,6 +7,9 @@ package graph
 import (
 	"context"
 	"fmt"
+	"github.com/sirupsen/logrus"
+	"reflect"
+	"strings"
 
 	"github.com/99designs/gqlgen/_examples/large-project-structure/main/public/graph/model"
 )
@@ -26,49 +29,127 @@ func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
 	}, nil
 }
 
-// func implementsInterface(typ *graphql.Type, interfaceName string) bool {
-// 	for _, iface := range typ.Interfaces() {
-// 		if iface.Name() == interfaceName {
-// 			return true
-// 		}
-// 	}
-// 	return false
-// }
+/*
+
+---- Played with a few ideas, but ultimately went with the derived
+---- "Get" + typeName reflect method call below the commented stuff here:
+
+// Registry to store types by name
+var typeRegistry = make(map[string]reflect.Type)
+
+// Registering the types that implement the AppConnector interface
+
+	func init() {
+		registerType((*model.AppCrowdStrike)(nil))
+		// Register other types as needed...
+	}
+
+// Function to register types
+
+	func registerType(typedNil interface{}) {
+		t := reflect.TypeOf(typedNil).Elem()
+		typeRegistry[t.Name()] = t
+	}
+
+// Function to create an instance from a string name
+
+	func createInstance(name string) (interface{}, error) {
+		t, ok := typeRegistry[name]
+		if !ok {
+			return nil, fmt.Errorf("type '%s' not registered", name)
+		}
+		return reflect.New(t).Interface(), nil
+	}
+
+// Function to check if an instance implements the AppConnector interface
+
+	func implementsAppConnector(instance interface{}) bool {
+		_, ok := instance.(model.AppConnector)
+		return ok
+	}
+
+// Function to call AppConnector methods
+
+	func callAppConnectorMethods(connector model.AppConnector) {
+		fmt.Println("ID:", connector.GetID())
+		fmt.Println("Name:", connector.GetName())
+		// Call other methods as needed...
+	}
+*/
+
+var PublicAppConnectorMethods []string
+
+// DynamicCallAppConnectorMethod is a utility function that calls an AppConnector method by name string
+func (r *queryResolver) DynamicCallAppConnectorMethod(ctx context.Context, methodName string) (model.AppConnector, error) {
+	appConnectorMethod := strings.Title(methodName)
+	// Use reflection to call the method
+	resolverValue := reflect.ValueOf(r.ExternalQueryResolver)
+	method := resolverValue.MethodByName(appConnectorMethod)
+	if !method.IsValid() {
+		return nil, fmt.Errorf("method %s does not exist on ExternalQueryResolver", appConnectorMethod)
+	}
+
+	// Call the method with the necessary arguments (e.g., context)
+	results := method.Call([]reflect.Value{reflect.ValueOf(ctx)})
+
+	// Handle the results
+	if len(results) != 2 {
+		return nil, fmt.Errorf("unexpected number of results from %s", appConnectorMethod)
+	}
+
+	if !results[1].IsNil() {
+		errInterface := results[1].Interface()
+		if err, ok := errInterface.(error); ok {
+			return nil, err
+		}
+	}
+
+	// Assert the result to the AppConnector interface
+	if appConnector, ok := results[0].Interface().(model.AppConnector); ok {
+		return appConnector, nil
+	}
+
+	logrus.Warnf("%s is not in PublicAppConnectorInterfaceTypes", appConnectorMethod)
+	return nil, nil
+}
 
 // ? allConnectorApps: [AppConnector!]!
 func (r *queryResolver) AllConnectorApps(ctx context.Context) ([]model.AppConnector, error) {
-	// 	q := `
-	// query IntrospectionQuery {
-	//   __schema {
-	//     types {
-	//       kind
-	//       name
-	//       interfaces {
-	//         name
-	//       }
-	//     }
-	//   }
-	// }
-	// // 	`
-	// 	// Execute the introspection query
-	// 	result, err := introspectionQuery(ctx)
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
+	var connectors []model.AppConnector
 
-	// var implementations []string
+	for _, methodName := range PublicAppConnectorMethods {
+		appConnector, err := r.DynamicCallAppConnectorMethod(ctx, methodName)
+		if err != nil {
+			logrus.Error(err)
+			continue
+		}
 
-	// // Access the underlying schema
-	// publicES := main.GetPublicSomething()
-	// schema := publicES.Schema()
-	// for _, typ := range schema.Types {
-	// 	fmt.Println("types", typ)
-	// 	if typ.Kind == "OBJECT" && implementsInterface(typ, "AppConnector") {
-	// 		implementations = append(implementations, typ.Name)
-	// 	}
-	// }
-	// fmt.Println(implementations)
-	return nil, nil
+		if appConnector != nil {
+			connectors = append(connectors, appConnector)
+		}
+	}
+
+	return connectors, nil
+
+	/*
+		var connectors []model.AppConnector
+
+		for _, typeName := range PublicAppConnectorInterfaceTypes {
+			instance, err := createInstance(typeName)
+			if err != nil {
+				logrus.Error(err)
+				continue
+			}
+
+			if implementsAppConnector(instance) {
+				connector := instance.(model.AppConnector)
+				connectors = append(connectors, connector)
+				callAppConnectorMethods(connector)
+			}
+		}
+
+		return connectors, nil
+	*/
 }
 
 // Mutation returns MutationResolver implementation.

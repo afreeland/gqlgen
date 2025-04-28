@@ -300,7 +300,7 @@ func (e *executableSchema) Schema() *ast.Schema {
 	return parsedSchema
 }
 
-func (e *executableSchema) Complexity(typeName, field string, childComplexity int, rawArgs map[string]any) (int, bool) {
+func (e *executableSchema) Complexity(ctx context.Context, typeName, field string, childComplexity int, rawArgs map[string]any) (int, bool) {
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
@@ -702,7 +702,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_addIndicator_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_addIndicator_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -714,7 +714,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createTodo_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createTodo_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -775,7 +775,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_getYaSome_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_getYaSome_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -1432,7 +1432,8 @@ type ContentUpdatePolicy {
 
 
 `, BuiltIn: false},
-	{Name: "../../../shared/graph/ui.graphqls", Input: `
+	{Name: "schema.graphqls", Input: sourceData("schema.graphqls"), BuiltIn: false},
+	{Name: "../../../graphql/schema_60acce95.graphqls", Input: `
 interface AppConnector {
   id: ID!
   name: String!
@@ -1520,7 +1521,12 @@ enum UIDefaultValueType {
   STRING
   INT
   BOOL
+  # Think more through JSON (JSONArray, JSONObject?)
   JSON
+  # key1=value1, key2=value2,
+  # {key1:value, key2=value2}
+
+  # Array[type]
 }
 
 enum UIDDynamicFieldType {
@@ -1556,6 +1562,7 @@ type UIDynamicField {
   required: Boolean!
   defaultValue: UIDefaultValue
 
+  # FIXME: should be an array
   validator: UIDynamicValidator
 
   # not ideal but options can live here for now...
@@ -1609,8 +1616,8 @@ enum UIDynamicConditionOperator {
   NEXISTS
   NULL
   NNULL
-}`, BuiltIn: false},
-	{Name: "schema.graphqls", Input: sourceData("schema.graphqls"), BuiltIn: false},
+}
+`, BuiltIn: false},
 	{Name: "../../../integration/schema.graphqls", Input: `type Test {
     id: ID!
 }

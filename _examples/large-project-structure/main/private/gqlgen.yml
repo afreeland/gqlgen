@@ -2,6 +2,7 @@
 schema:
   - ../../shared/graph/*.graphqls
   - graph/*.graphqls
+  - ../../graphql/*.graphqls
   - ../../integration/private/graph/schema.graphqls
 
 # Where should the generated server code go?

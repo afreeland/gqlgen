@@ -2,10 +2,13 @@ package main
 
 import (
 	"fmt"
+	"github.com/99designs/gqlgen/_examples/large-project-structure/integration"
+	public_graph "github.com/99designs/gqlgen/_examples/large-project-structure/main/public/graph"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"slices"
 	"syscall"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -17,20 +20,14 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/vektah/gqlparser/v2/ast"
 
-	"github.com/99designs/gqlgen/_examples/large-project-structure/integration"
 	private_int_graph "github.com/99designs/gqlgen/_examples/large-project-structure/integration/private/graph"
 	private_graph "github.com/99designs/gqlgen/_examples/large-project-structure/main/private/graph"
-	public_graph "github.com/99designs/gqlgen/_examples/large-project-structure/main/public/graph"
 )
 
 const defaultPort = "8080"
 const privatePort = "8081"
 
 var publicExecutableSchema graphql.ExecutableSchema
-
-func GetPublicSomething() graphql.ExecutableSchema {
-	return publicExecutableSchema
-}
 
 func main() {
 	publicPort := os.Getenv("PORT")
@@ -67,7 +64,7 @@ func main() {
 		"namespace": "main",
 	})
 
-	publicExecutableSchema = public_graph.NewExecutableSchema(public_graph.Config{
+	resolver := public_graph.NewResolver(public_graph.NewExecutableSchema(public_graph.Config{
 		Resolvers: &public_graph.Resolver{
 			ExternalQueryResolver: &integration.Resolver{
 				Logger: func(log *logrus.Logger) *logrus.Entry {
@@ -79,7 +76,43 @@ func main() {
 			},
 			// Add other team resolvers here
 		},
-	})
+	}))
+
+	publicExecutableSchema = resolver.GetExecutableSchema()
+
+	if publicExecutableSchema == nil {
+		log.Fatal("Executable schema is nil")
+	}
+
+	parsedSchema := resolver.GetParsedSchema()
+	if parsedSchema == nil {
+		log.Fatal("Parsed schema is nil")
+	} else {
+		log.Println("Parsed Schema: ", parsedSchema)
+	}
+
+	var AppConnectorMethods []string
+	var AppConnectorInterfaceTypes []string
+
+	for key, obj := range parsedSchema.Types {
+		for _, iface := range obj.Interfaces {
+			if iface == "AppConnector" {
+				AppConnectorInterfaceTypes = append(AppConnectorInterfaceTypes, key)
+				break
+			}
+		}
+	}
+
+	for _, obj := range parsedSchema.Query.Fields {
+		if slices.Contains(AppConnectorInterfaceTypes, obj.Type.NamedType) {
+			AppConnectorMethods = append(AppConnectorMethods, obj.Name)
+		}
+	}
+
+	if len(AppConnectorMethods) > 0 {
+		public_graph.PublicAppConnectorMethods = AppConnectorMethods
+	}
+
 	// Create a new executable schema with the composed resolver
 	publicSrv := handler.NewDefaultServer(publicExecutableSchema)
 
