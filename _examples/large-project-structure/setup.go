@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/djang0man/sdui/copyschemas"
+	"github.com/djang0man/connector-external/copyschemas"
 )
 
 func main() {
